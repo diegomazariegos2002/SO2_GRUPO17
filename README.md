@@ -15,15 +15,28 @@ https://community.linuxmint.com/software/view/gdb
 
 ![alt text](images/image2.png)
 
+
+## Adicional para STAP
+
+```
+sudo apt-get update
+sudo apt-get install systemtap
+```
+
+### Verificación stap
+
+`stap -V`
+
 ## Proceso para ejecutar
 
 ### Crear bin hijo
 
 ### Crear bin padre
 
-`gcc parent.c -o parent`
+`gcc father.c -o father`
 
-### Crear bin stp
+### Ejecutar stp
+`sudo stap monitor.stp`
 
 ### Ejecutar padre (carpeta raíz)
-`./parent`
+`./father`

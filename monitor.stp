@@ -1,0 +1,29 @@
+#!/usr/bin/stap
+
+global total_calls = 0
+
+probe begin {
+    printf("Iniciando monitorización de llamadas al sistema para los procesos: %d y %d\n", $1, $2);
+}
+
+probe syscall.read {
+    if (pid() == $1 || pid() == $2) {
+        printf("Proceso (%d) : %s %s [%s]\n", pid(), execname(), name, ctime(gettimeofday_s()));
+    }
+}
+
+probe syscall.write {
+    if (pid() == $1 || pid() == $2) {
+        printf("Proceso (%d) : %s %s [%s]\n", pid(), execname(), name, ctime(gettimeofday_s()));
+    }
+}
+
+probe syscall.open, syscall.openat {
+    if (pid() == $1 || pid() == $2) {
+        printf("Proceso (%d) : %s %s [%s]\n", pid(), execname(), name, ctime(gettimeofday_s()));
+    }
+}
+
+probe end {
+    printf("Terminando monitorización de llamadas al sistema\n");
+}
