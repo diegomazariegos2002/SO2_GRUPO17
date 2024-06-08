@@ -15,3 +15,15 @@ https://community.linuxmint.com/software/view/gdb
 
 ![alt text](images/image2.png)
 
+## Proceso para ejecutar
+
+### Crear bin hijo
+
+### Crear bin padre
+
+`gcc parent.c -o parent`
+
+### Crear bin stp
+
+### Ejecutar padre (carpeta raíz)
+`./parent`
