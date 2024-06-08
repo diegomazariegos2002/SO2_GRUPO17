@@ -62,7 +62,7 @@ int main() {
         arg_Ptr[2] = " Soy el proceso hijo! ";
         arg_Ptr[3] = NULL; // El ultimo indice de argv siempre debe de ser NULL
 
-        execv("/home/diegomazariegos/Documentos/proyectos/SO2_GRUPO17./son.bin", arg_Ptr);
+        execv("/home/diegomazariegos/Documentos/proyectos/SO2_GRUPO17/Practica1/son.bin", arg_Ptr);
         // Si execv falla
         perror("execv");
         exit(1);
@@ -76,7 +76,7 @@ int main() {
             arg_Ptr[2] = " Soy el proceso hijo2! ";
             arg_Ptr[3] = NULL; // El ultimo indice de argv siempre debe de ser NULL
 
-            execv("/home/diegomazariegos/Documentos/proyectos/SO2_GRUPO17./son.bin", arg_Ptr);
+            execv("/home/diegomazariegos/Documentos/proyectos/SO2_GRUPO17/Practica1/son.bin", arg_Ptr);
             // Si execv falla
             perror("execv");
             exit(1);
