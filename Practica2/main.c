@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h> 
 #include "Carga_Usuario/cargaUsuario.h"  
+#include "Carga_Operaciones/cargaOperaciones.h"
 
 void pausar() {
     printf("Presione Enter para continuar...");
@@ -80,7 +81,15 @@ void mostrarMenuCarga() {
                 pausar();
                 break;
             case 2:
-                printf("Cargas masivas de operaciones \n");
+                char ruta_operaciones[1000];
+                printf("Ingrese la ruta del archivo Json\n");
+                scanf("%499s", ruta_operaciones);
+                printf("Ruta ingresada: %s\n", ruta_operaciones);
+                system("clear");
+                //cargarOperaciones(ruta_operaciones);
+                cargarOperaciones("/home/diegomazariegos/Documentos/proyectos/SO2_GRUPO17/Practica2/archivos_de_entrada_(prueba)/transacciones.json");
+                //procesarOperaciones();
+                //generarReporteOperaciones();
                 pausar();
                 break;
             case 3:
