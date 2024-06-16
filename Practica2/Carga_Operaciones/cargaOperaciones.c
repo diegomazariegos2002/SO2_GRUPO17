@@ -1,16 +1,81 @@
 #include "cargaOperaciones.h"
+#include "../Carga_Usuario/cargaUsuario.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
 #include <cjson/cJSON.h>
-#include "Carga_Usuario/cargaUsuario.h"
+#include <time.h>
 
 #define NUM_THREADS 4
 
 Operacion *operaciones;
 int num_operaciones = 0;
 pthread_mutex_t lock;
+Error* listaErrores = NULL;
+// Variables globales para contar las operaciones
+int depositos = 0;
+int retiros = 0;
+int transferencias = 0;
+int operacionesPorHilo[NUM_THREADS] = {0};
+
+// Funcion para obtener la fecha y hora actual en el formato del nombre del archivo
+void obtenerFechaHoraArchivo(char* buffer, size_t bufferSize) {
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    strftime(buffer, bufferSize, "./Reportes/operaciones_%Y_%m_%d-%H_%M_%S.log", &tm);
+}
+
+// Funcion para obtener la fecha y hora actual en el formato deseado para el contenido del archivo
+void obtenerFechaHoraContenido(char* buffer, size_t bufferSize) {
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    strftime(buffer, bufferSize, "%Y-%m-%d %H:%M:%S", &tm);
+}
+
+void generarReporteOperaciones() {
+    char filename[100];
+    obtenerFechaHoraArchivo(filename, sizeof(filename));
+
+    FILE *file = fopen(filename, "w");
+    if (!file) {
+        perror("Error al crear el archivo de reporte");
+        return;
+    }
+
+    fprintf(file, "---------- Resumen de operaciones ----------\n");
+    char fechaHora[20];
+    obtenerFechaHoraContenido(fechaHora, sizeof(fechaHora));
+    fprintf(file, "Fecha: %s\n\n", fechaHora);
+    fprintf(file, "Operaciones realizadas:\n");
+    fprintf(file, "Retiros: %d\n", retiros);
+    fprintf(file, "Depositos: %d\n", depositos);
+    fprintf(file, "Transferencias: %d\n", transferencias);
+    fprintf(file, "Total: %d\n\n", retiros + depositos + transferencias);
+    
+    fprintf(file, "Operaciones por hilo:\n");
+    for (int i = 0; i < NUM_THREADS; i++) {
+        fprintf(file, "Hilo #%d: %d\n", i + 1, operacionesPorHilo[i]);
+    }
+    fprintf(file, "Total: %d\n\n", retiros + depositos + transferencias);
+
+    fprintf(file, "Errores:\n");
+    Error* actual = listaErrores;
+    while (actual != NULL) {
+        fprintf(file, "Linea #%d: %s\n", actual->linea, actual->descripcion);
+        actual = actual->siguiente;
+    }
+
+    fclose(file);
+}
+
+void registrarError(int linea, const char* descripcion) {
+    Error* nuevoError = malloc(sizeof(Error));
+    nuevoError->linea = linea;
+    strcpy(nuevoError->descripcion, descripcion);
+    nuevoError->siguiente = listaErrores;
+    listaErrores = nuevoError;
+}
 
 void* procesar_operaciones_thread(void* arg) {
     int thread_id = *(int*)arg;
@@ -20,30 +85,45 @@ void* procesar_operaciones_thread(void* arg) {
 
     for (int i = inicio; i < fin; i++) {
         Operacion op = operaciones[i];
-        Cuenta *cuenta1 = buscar_cuenta(op.cuenta1);
-        Cuenta *cuenta2 = (op.operacion == 3) ? buscar_cuenta(op.cuenta2) : NULL;
+        Usuario *cuenta1 = buscarUsuario(op.cuenta1);
+        Usuario *cuenta2 = (op.operacion == 3) ? buscarUsuario(op.cuenta2) : NULL;
 
         if (cuenta1 == NULL || (op.operacion == 3 && cuenta2 == NULL)) {
-            // Manejar errores de cuenta no encontrada
+            registrarError(i + 1, "Numero de cuenta no existe");
             continue;
         }
 
+        int resultado;
         switch (op.operacion) {
             case 1: // Deposito
-                depositar(cuenta1, op.monto);
+                resultado = depositar(cuenta1, op.monto);
+                if (resultado != 0) {
+                    registrarError(i + 1, "Error en deposito");
+                } else {
+                    depositos++;
+                    operacionesPorHilo[thread_id]++;
+                }
                 break;
             case 2: // Retiro
-                if (cuenta1->saldo >= op.monto) {
-                    retirar(cuenta1, op.monto);
+                resultado = retirar(cuenta1, op.monto);
+                if (resultado != 0) {
+                    registrarError(i + 1, "Saldo insuficiente");
+                } else {
+                    retiros++;
+                    operacionesPorHilo[thread_id]++;
                 }
                 break;
             case 3: // Transferencia
-                if (cuenta1->saldo >= op.monto) {
-                    transferir(cuenta1, cuenta2, op.monto);
+                resultado = transferir(cuenta1, cuenta2, op.monto);
+                if (resultado != 0) {
+                    registrarError(i + 1, "Saldo insuficiente");
+                } else {
+                    transferencias++;
+                    operacionesPorHilo[thread_id]++;
                 }
                 break;
             default:
-                // Manejar errores de operación desconocida
+                registrarError(i + 1, "Operacion no valida");
                 break;
         }
     }
@@ -96,32 +176,27 @@ void cargarOperaciones(const char *filename) {
 }
 
 void procesarOperaciones() {
-    pthread_t threads[NUM_THREADS];
-    int thread_ids[NUM_THREADS];
+    pthread_t threads[NUM_THREADS]; // Declaracion de un array de identificadores de hilos.
+    int thread_ids[NUM_THREADS]; // Declaracion de un array de identificadores de hilos.
 
-    pthread_mutex_init(&lock, NULL);
+    pthread_mutex_init(&lock, NULL); // Inicializacion del mutex.
 
+    // Creacion de los hilos.
     for (int i = 0; i < NUM_THREADS; i++) {
-        thread_ids[i] = i;
-        pthread_create(&threads[i], NULL, procesar_operaciones_thread, &thread_ids[i]);
+        thread_ids[i] = i; // Asignacion del identificador al hilo.
+        pthread_create(&threads[i], NULL, procesar_operaciones_thread, &thread_ids[i]); // Creacion del hilo y asignacion de la funcion 'procesar_operaciones_thread'.
     }
 
+    // Espera a que todos los hilos terminen su ejecucion.
     for (int i = 0; i < NUM_THREADS; i++) {
-        pthread_join(threads[i], NULL);
+        pthread_join(threads[i], NULL); // Bloquea hasta que el hilo especificado termine.
     }
 
-    pthread_mutex_destroy(&lock);
+    pthread_mutex_destroy(&lock); // Destruccion del mutex.
 }
 
-void generarReporteOperaciones() {
-    FILE *file = fopen("Reportes/carga_reporte.log", "w");
-    if (!file) {
-        perror("Error al crear el archivo de reporte");
-        return;
-    }
-
-    // Escribir detalles de las operaciones realizadas y errores
-    fprintf(file, "Reporte de operaciones...\n");
-
-    fclose(file);
+void ejecutarCargaMasivaOperaciones(const char *filename) {
+    cargarOperaciones(filename);
+    procesarOperaciones();
+    generarReporteOperaciones();
 }

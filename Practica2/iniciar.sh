@@ -1,6 +1,6 @@
 #!/bin/bash
 
-gcc -o main main.c Carga_Usuario/cargaUsuario.c -lpthread -lcjson -I/usr/include/cjson
+gcc -o main main.c Carga_Usuario/cargaUsuario.c Carga_Operaciones/cargaOperaciones.c -lpthread -lcjson -I/usr/include/cjson
 
 # Verificar si la compilación fue exitosa
 if [ $? -eq 0 ]; then

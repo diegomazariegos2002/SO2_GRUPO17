@@ -76,8 +76,8 @@ void mostrarMenuCarga() {
                 scanf("%499s", ruta);
                 printf("Ruta ingresada: %s\n", ruta);
                 system("clear");
-                cargarUsuarios(ruta);
-                //cargarUsuarios("/home/angel/Documentos/GitHub/SO2_GRUPO17./Practica2/archivos_de_entrada_(prueba)/usuarios.json");
+                //cargarUsuarios(ruta);
+                cargarUsuarios("/home/diegomazariegos/Documentos/proyectos/SO2_GRUPO17/Practica2/archivos_de_entrada_(prueba)/usuarios.json");
                 pausar();
                 break;
             case 2:
@@ -86,10 +86,8 @@ void mostrarMenuCarga() {
                 scanf("%499s", ruta_operaciones);
                 printf("Ruta ingresada: %s\n", ruta_operaciones);
                 system("clear");
-                //cargarOperaciones(ruta_operaciones);
-                cargarOperaciones("/home/diegomazariegos/Documentos/proyectos/SO2_GRUPO17/Practica2/archivos_de_entrada_(prueba)/transacciones.json");
-                //procesarOperaciones();
-                //generarReporteOperaciones();
+                //ejecutarCargaMasivaOperaciones(ruta_operaciones);
+                ejecutarCargaMasivaOperaciones("/home/diegomazariegos/Documentos/proyectos/SO2_GRUPO17/Practica2/archivos_de_entrada_(prueba)/transacciones.json");
                 pausar();
                 break;
             case 3:
