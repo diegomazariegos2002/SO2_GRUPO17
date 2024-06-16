@@ -1,0 +1,21 @@
+--------- Carga de usuarios ---------
+Fecha: 2024-06-15 18:37:28
+
+Usuarios Cargados:
+Hilo #1: 28
+Hilo #2: 32
+Hilo #3: 34
+Total de usuarios procesados: 94
+
+Errores: 
+Total de errores: 10
+  - Error en la cuenta 6051 (índice 68): Saldo negativo
+  - Error en la cuenta 4775 (índice 90): Campo 'saldo' no es un número. 
+  - Error en la cuenta 4483 (índice 40): Saldo negativo
+  - Error en la cuenta 5877 (índice 55): Número de cuenta duplicado
+  - Error en la cuenta 2096 (índice 0): Número de cuenta duplicado
+  - Error en la cuenta 3959 (índice 4): Número de cuenta duplicado
+  - Error en la cuenta 5237 (índice 6): Campo 'saldo' no es un número. 
+  - Error en la cuenta 5006 (índice 18): Saldo negativo
+  - Error en la cuenta 4024 (índice 24): Campo 'saldo' no es un número. 
+  - Error en la cuenta 9439 (índice 30): Número de cuenta duplicado

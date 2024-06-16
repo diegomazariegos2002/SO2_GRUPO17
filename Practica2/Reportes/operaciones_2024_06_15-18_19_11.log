@@ -1,0 +1,42 @@
+---------- Resumen de operaciones ----------
+Fecha: 2024-06-15 18:19:11
+
+Operaciones realizadas:
+Retiros: 54
+Depositos: 68
+Transferencias: 53
+Total: 175
+
+Operaciones por hilo:
+Hilo #1: 44
+Hilo #2: 44
+Hilo #3: 44
+Hilo #4: 43
+Total: 175
+
+Errores:
+Linea #39: Saldo insuficiente
+Linea #38: Operacion no valida
+Linea #28: Saldo insuficiente
+Linea #25: Saldo insuficiente
+Linea #23: Saldo insuficiente
+Linea #19: Operacion no valida
+Linea #86: Operacion no valida
+Linea #80: Operacion no valida
+Linea #79: Saldo insuficiente
+Linea #64: Numero de cuenta no existe
+Linea #63: Operacion no valida
+Linea #51: Operacion no valida
+Linea #147: Saldo insuficiente
+Linea #145: Operacion no valida
+Linea #141: Saldo insuficiente
+Linea #130: Operacion no valida
+Linea #129: Saldo insuficiente
+Linea #110: Saldo insuficiente
+Linea #200: Saldo insuficiente
+Linea #195: Operacion no valida
+Linea #180: Saldo insuficiente
+Linea #179: Saldo insuficiente
+Linea #175: Saldo insuficiente
+Linea #168: Saldo insuficiente
+Linea #163: Saldo insuficiente

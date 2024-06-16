@@ -1,0 +1,20 @@
+Ingrese el numero de cuenta: 2096
+Numero de cuenta: 2096
+Nombre: Cynthy Whitsun
+Saldo: 23892.22
+
+Ingrese el numero de cuenta: 4929
+Numero de cuenta: 4929
+Nombre: Karlan Canario
+Saldo: 35366.97
+
+deposito 2096 -> Q1000
+saldo: 24892.22
+
+Retiro 4929 -> Q1000
+saldo: 34366.97
+
+transferencia 2096 -> 4929 : 3000
+
+saldo1:21892.22 
+saldo2:37366.97
