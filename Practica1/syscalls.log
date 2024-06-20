@@ -1,0 +1,4 @@
+Iniciando monitorización de llamadas al sistema para los procesos: 32975 y 32976
+Proceso (32975) : son.bin read [Thu Jun 20 14:25:24 2024]
+Proceso (32975) : son.bin write [Thu Jun 20 14:25:24 2024]
+Terminando monitorización de llamadas al sistema

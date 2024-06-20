@@ -1,0 +1,2 @@
+Iniciando monitorización de llamadas al sistema para mmap
+Terminando monitorización de llamadas al sistema

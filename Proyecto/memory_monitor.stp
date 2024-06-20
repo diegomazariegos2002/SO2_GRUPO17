@@ -1,0 +1,10 @@
+#!/usr/bin/stap
+
+probe syscall.mmap2 {
+    printf("%d, %s, %lu, %s, %s\n", pid(), execname(), length, name, ctime(gettimeofday_s() +3600*-6));
+}
+
+probe syscall.munmap {
+    printf("%d, %s, %lu, %s, %s\n", pid(), execname(), length, name, ctime(gettimeofday_s() +3600*-6));
+
+}
