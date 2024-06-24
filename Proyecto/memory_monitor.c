@@ -93,6 +93,7 @@ int main() {
 
         // Insert data into LLAMADA table
         char query[512];
+        //fprintf(stdout, "INSERT INTO LLAMADA (pid, nombre_proceso, llamada, size, fecha) VALUES (%s, '%s', '%s', %.2f, '%s');", pid_str, execname, name, size_mb, formatted_timestamp);
         snprintf(query, sizeof(query), "INSERT INTO LLAMADA (pid, nombre_proceso, llamada, size, fecha) VALUES (%s, '%s', '%s', %.2f, '%s');", pid_str, execname, name, size_mb, formatted_timestamp);
         if (mysql_query(conn, query)) {
             fprintf(stderr, "INSERT error: %s\n", mysql_error(conn));

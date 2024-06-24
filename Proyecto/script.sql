@@ -14,7 +14,7 @@ CREATE TABLE LLAMADA (
     nombre_proceso VARCHAR(255) NOT NULL,
     llamada VARCHAR(255) NOT NULL,
     size DOUBLE NOT NULL,
-    fecha DATE NOT NULL
+    fecha DATETIME NOT NULL
 );
 
 -- Crear la tabla PROCESO
