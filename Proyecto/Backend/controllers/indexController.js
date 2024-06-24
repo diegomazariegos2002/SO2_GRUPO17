@@ -52,40 +52,86 @@ class IndexController {
 
     async GetTop(req, res) {
         try {
-            pool.query(
-                `SELECT pid, nombre, size, porcentaje
-                    FROM (
-                        SELECT pid, nombre, size, porcentaje
-                        FROM monitor.PROCESO
-                        ORDER BY size DESC
-                        LIMIT 9
-                    ) AS Top9
+            const query = `
+               WITH procesos_ordenados AS (
+                SELECT
+                    id,
+                    pid,
+                    nombre,
+                    size,
+                    porcentaje,
+                    ROW_NUMBER() OVER (PARTITION BY pid ORDER BY id DESC) AS rn
+                FROM
+                    monitor.PROCESO
+            ),
+            procesos_filtrados AS (
+                SELECT
+                    id,
+                    pid,
+                    nombre,
+                    size,
+                    porcentaje
+                FROM
+                    procesos_ordenados
+                WHERE
+                    rn = 1
+                ORDER BY
+                    size DESC
+            ),
+            top_9 AS (
+                SELECT
+                    id,
+                    pid,
+                    nombre,
+                    size,
+                    porcentaje
+                FROM
+                    procesos_filtrados
+                LIMIT 9
+            ),
+            resto AS (
+                SELECT
+                    SUM(size) AS size_total,
+                    SUM(porcentaje) AS porcentaje_total
+                FROM
+                    (SELECT
+                        id,
+                        size,
+                        porcentaje
+                    FROM
+                        procesos_filtrados
+                    LIMIT 9, 18446744073709551615) AS subquery
+            )
+            SELECT
+                id,
+                pid,
+                nombre,
+                size,
+                porcentaje
+            FROM
+                top_9
+            UNION ALL
+            SELECT
+                NULL AS id,
+                NULL AS pid,
+                'Otros' AS nombre,
+                size_total AS size,
+                porcentaje_total AS porcentaje
+            FROM
+                resto;
 
-                    UNION ALL
-
-                    SELECT 
-                        NULL AS pid,
-                        'Otros' AS nombre,
-                        SUM(size) AS size,
-                        SUM(porcentaje) AS porcentaje
-                    FROM (
-                        SELECT size, porcentaje
-                        FROM monitor.PROCESO
-                        ORDER BY size DESC
-                        LIMIT 9, 18446744073709551615
-                    ) AS Otros;
-                    `,
-                (error, results) => {
-                    if (error) {
-                        res.json({ mensaje: "Error" });
-                        return;
-                    }
-                    if (results && results.length > 0) {
-                        res.json(results);
-                    } else {
-                        res.json({ mensaje: "Error" });
-                    }
-                });
+            `;
+            pool.query(query, (error, results) => {
+                if (error) {
+                    res.json({ mensaje: "Error" });
+                    return;
+                }
+                if (results && results.length > 0) {
+                    res.json(results);
+                } else {
+                    res.json({ mensaje: "Error" });
+                }
+            });
         } catch (error) {
             res.json({ mensaje: "Error" });
         }

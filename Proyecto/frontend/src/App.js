@@ -30,6 +30,7 @@ const App = () => {
   const [processData, setProcessData] = useState([]);
   const [requestsData, setRequestsData] = useState([]);
   const [topData, setTopData] = useState([]);
+  const [intervalTime, setIntervalTime] = useState(5000); // Intervalo de 5 segundos
 
   const fetchData = async () => {
     try {
@@ -71,12 +72,14 @@ const App = () => {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(() => {
-      fetchData();
-    }, 5000); // Intervalo de 5 segundos
+    const interval = setInterval(fetchData, intervalTime);
 
     return () => clearInterval(interval);
-  }, []); 
+  }, [intervalTime]); 
+
+  const toggleInterval = () => {
+    setIntervalTime(prevInterval => prevInterval === 5000 ? 600000 : 5000); // Alterna entre 5 segundos y 10 minutos
+  };
 
   return (
     <div className="container">
@@ -87,9 +90,14 @@ const App = () => {
           <ProcessTable columns={columnsTop} data={topData} />
         </div>
         <div className="col-md-4">
+          <button className="btn btn-primary mb-3" onClick={toggleInterval}>
+            Cambiar intervalo a {intervalTime === 5000 ? '10 minutos' : '5 segundos'}
+          </button>
           <h2>Gráfico de Pie</h2>
           <PieChart data={topData} />
+          
         </div>
+
       </div>
       <hr className="my-4" />
       <h2>Procesos</h2>
